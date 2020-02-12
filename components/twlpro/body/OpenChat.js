@@ -15,7 +15,9 @@ import {
 } from 'react-native';
 
 import { Header } from 'react-native-elements';
-
+import Loading from '../../common/Loading';
+import NoteVoice from '../../common/NoteVoice';
+import Attachment from '../../common/Attachment';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Config} from './../../../helpers/Config';
 
@@ -39,7 +41,7 @@ export default class Chat extends Component {
       data: [],
       filler: false,
       activo_teclado:"",
-      mensaje:"Hola",
+      mensaje:"",
     };
   }
 
@@ -52,6 +54,8 @@ export default class Chat extends Component {
     this.props.state.socket.removeListener('actualizar_mensajes');
     this.props.state.socket.removeListener('actualizar_mensajes_app');
   }
+
+  //this.props.methods.sobre_escribir_el_estado({loading:false});
 
   actualizar_mensajes=(data)=>{
     if (data.data[1].mensaje_app!=undefined) {
@@ -86,7 +90,7 @@ export default class Chat extends Component {
     if(this.state.mensaje!==''){
       /*preparo el mensaje*/
       let obj	=	{
-                  "url":Config.ApiRest + "post?modulo=Chat&m=Login&formato=json&u="+yo.token,
+                  "url":Config.ApiRest + "post?modulo=Chat&m=message&formato=json&u="+yo.token,
                   "name":yo.nombre_usuario,
                   "mensaje":this.state.mensaje,
                   "token":this.props.state.token,
@@ -123,6 +127,28 @@ export default class Chat extends Component {
     this.setState({filler: false,activo_teclado:"Inactivo"})
   }
 
+
+
+  handlerAddfile = (event) =>{
+    console.log(event);
+  }
+
+  microphone = () => {
+    return <NoteVoice  methods={this.props.methods}/>
+  }
+
+  microphone_ = () => {
+    return <TouchableOpacity onPress={this.handlerMicrophone}>
+      <View style={styles.btnSend}>
+        <Voice/>
+      </View>
+    </TouchableOpacity>
+  }
+
+  addfile = () => {
+    return <Attachment  methods={this.props.methods}/>
+  }
+
   renderDate = (date) => {
     return(
       <Text style={styles.time}>
@@ -134,22 +160,31 @@ export default class Chat extends Component {
   render() {
     let yo      =   this.props.state.user
     let user_id =   parseInt(yo.user_id);
-
-    return (
-      <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
-        <Header
+    if (!this.props.state.loading) {
+      return (
+        <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
+          <Header
           statusBarProps={{ barStyle: 'light-content' }}
           barStyle="light-content" // or directly
           placement="left"
           centerComponent={{ text: this.props.state.chat.nombre_usuario, style: { color: '#111',fontSize:30 } }}
           leftComponent={{ type: 'font-awesome', icon: 'chevron-left', onPress: () => this.props.methods.sobre_escribir_el_estado({screen:"ListaChats"}) }}
-          rightComponent={{ text: this.state.activo_teclado }}
+          rightComponent={
+            <View style={styles.inputContainer}>
+              {
+                this.addfile()
+              }
+              {
+                this.microphone()
+              }
+            </View>
+          }
           containerStyle={{
             backgroundColor: '#f2f2f2',
             justifyContent: 'space-around',
           }}
-        />
-        <ScrollView
+          />
+          <ScrollView
             style={styles.container}
             ref="scrollView"
             onContentSizeChange={(w, h) => {
@@ -159,15 +194,8 @@ export default class Chat extends Component {
                 this.currHeight - this.scrollHeight > this.prevHeight
               ) {
                 this.scrollHeight += this.currHeight - this.prevHeight;
-                // console.log("--------------------------------------------");
-                // console.log("Curr: ", this.currHeight);
-                // console.log("Prev: ", this.prevHeight);
-                //console.log("Scroll: ", this.scrollHeight);
                 this.prevHeight = this.currHeight;
-                // console.log("PREV: ", this.prevHeight);
-                // console.log("--------------------------------------------");
                 this.scrollToBottom();
-                //setTimeout(() => this.scrollToBottom(), 500);
               }
             }}
             onLayout={ev => {
@@ -175,13 +203,12 @@ export default class Chat extends Component {
               this.prevHeight = fixedContentHeight;
             }}
           >
-
-          <FlatList style={styles.list}
-            vertical
-            data={this.props.state.messages}
-            extraData={this.props.state}
-            keyExtractor= {(item, index) => index.toString()}
-            renderItem={(message) => {
+            <FlatList style={styles.list}
+              vertical
+              data={this.props.state.messages}
+              extraData={this.props.state}
+              keyExtractor= {(item, index) => index.toString()}
+              renderItem={(message) => {
               const item = message.item;
               let emisor_id = parseInt(item.emisor_id);
               let inMessage = item.type === 'in';
@@ -209,22 +236,22 @@ export default class Chat extends Component {
               }else{
                 let nuevo_contenido = "";
                 if (item.extension=="jpg"   ||
-                    item.extension=="jpeg"  ||
-                    item.extension=="png"   ||
-                    item.extension=="gif") {
-                      mensaje_string  =   item.mensaje_app?item.mensaje_app:'Vacío';
-                      nuevo_contenido = <Text onPress={()=>{Linking.openURL(mensaje_string)}}>
-                                          <Image style={{width: 80, height: 80}} source={{uri: item.mensaje_app }} />
-                                        </Text>
-                    //nuevo_contenido =  <Image source={item.mensaje_app} />
+                item.extension=="jpeg"  ||
+                item.extension=="png"   ||
+                item.extension=="gif") {
+                  mensaje_string  =   item.mensaje_app?item.mensaje_app:'Vacío';
+                  nuevo_contenido = <Text onPress={()=>{Linking.openURL(mensaje_string)}}>
+                  <Image style={{width: 80, height: 80}} source={{uri: item.mensaje_app }} />
+                  </Text>
+                  //nuevo_contenido =  <Image source={item.mensaje_app} />
                 }else if (item.extension=="pdf"   ||
-                          item.extension=="doc"   ||
-                          item.extension=="docx"  ||
-                          item.extension=="xls") {
+                item.extension=="doc"   ||
+                item.extension=="docx"  ||
+                item.extension=="xls") {
                   mensaje_string  =   item.mensaje_app?item.mensaje_app:'Vacío';
                   nuevo_contenido =   <Text onPress={()=>{Linking.openURL(mensaje_string)}}>
-                                        <Icon name="download" size={25} color="#aaa" />
-                                      </Text>;
+                  <Icon name="download" size={25} color="#aaa" />
+                  </Text>;
                 }else {
                   nuevo_contenido =   item.mensaje_app;
                 }
@@ -243,25 +270,32 @@ export default class Chat extends Component {
                 </View>
               )
             }}/>
-        </ScrollView>
-
-        <View style={styles.footer}>
-          <View style={styles.inputContainer}>
-            <TextInput ref="textarea"
-              style={styles.inputs}
-              onChangeText={(text)=>{this.setState({mensaje:text});}}
-              placeholder="Escribir mensaje..."
-              underlineColorAndroid='transparent'
-              value={this.state.mensaje}
-            />
-            { this.state.filler ? <View style={styles.filler}/> : null }
+          </ScrollView>
+          <View style={styles.footer}>
+            <View style={styles.inputContainer}>
+              <TextInput ref="textarea"
+                style={styles.inputs}
+                onChangeText={(text)=>{this.setState({mensaje:text});}}
+                placeholder="Escribir mensaje..."
+                underlineColorAndroid='transparent'
+                value={this.state.mensaje}
+              />
+              { this.state.filler ? <View style={styles.filler}/> : null }
+            </View>
+            <TouchableOpacity onPress={this.handlerSend} >
+              <View style={styles.btnSend}>
+                <Icon name="send" size={20} color="#aaa" />
+              </View>
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity onPress={this.handlerSend} style={styles.btnSend}>
-            <Image source={{uri:"https://png.icons8.com/small/75/ffffff/filled-sent.png"}} style={styles.iconSend}  />
-          </TouchableOpacity>
-        </View>
-      </KeyboardAvoidingView>
-    );
+        </KeyboardAvoidingView>
+      );
+    }else {
+      return(
+        <Loading/>
+      )
+    }
+
   }
 
 }
@@ -284,12 +318,14 @@ const styles = StyleSheet.create({
     padding:5,
   },
   btnSend:{
-    backgroundColor:"#00BFFF",
+    backgroundColor:"#ddd",
     width:40,
     height:40,
     borderRadius:360,
     alignItems:'center',
     justifyContent:'center',
+    marginLeft:5,
+    marginRight:5,
   },
   iconSend:{
     width:30,

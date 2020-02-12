@@ -15,6 +15,7 @@ class Body extends Component {
 
   ActualizaState  = (data)=>{
     this.props.methods.sobre_escribir_el_estado(data);
+    this.props.methods.sobre_escribir_el_estado({loading:false});
   }
 
   handleOpenChat   = (me) =>{
@@ -33,7 +34,7 @@ class Body extends Component {
       .then(response => response.json())
       .then(data =>this.ActualizaState(data.response)
     );
-    this.props.methods.sobre_escribir_el_estado({screen:"OpenChat",chat:me});
+    this.props.methods.sobre_escribir_el_estado({screen:"OpenChat",chat:me,loading:true});
   }
 
   render() {

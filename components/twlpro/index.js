@@ -93,7 +93,8 @@ class App extends Component {
       messages:[],
       styles:styles,
       data_peticiones:[],
-      socket:[]
+      socket:[],
+      loading:false,
     }
   }
 
