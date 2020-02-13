@@ -12,6 +12,11 @@ const Storage = {
   get:(key)=>{
     return AsyncStorage.getItem(key);
   },
+  clear:(method)=>{
+    console.log(321);
+    AsyncStorage.clear();
+    method.sobre_escribir_el_estado({user:{}});
+  },
 };
 
 let  UserDefault = {  user_id:0,

@@ -51,6 +51,7 @@ class Body extends Component {
             <OpenChat methods={this.props.methods} state={this.props.state}/>
           )
         break;
+        case "Home":
         default:
           return(
             <ListaChats method={this.handleOpenChat} listaUsuario={this.props.state.listaUsuario}/>

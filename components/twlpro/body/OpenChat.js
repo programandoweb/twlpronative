@@ -63,7 +63,7 @@ export default class Chat extends Component {
       data.data[1].type=(data.data[1].type)?data.data[1].type:"text";
     }
     let methods   = this.props.methods;
-    let messages  =  this.props.state.messages
+    let messages  =  this.props.state.messages;
     messages.push(data.data[1]);
     methods.sobre_escribir_el_estado({messages: messages});
     setTimeout(() => this.refs.scrollView.scrollToEnd({animated: true}), 400)
@@ -82,7 +82,7 @@ export default class Chat extends Component {
   response  = (data)  =>  {
     this.props.state.socket.emit('enviar_mensaje',data);
     this.props.state.socket.emit('enviar_mensaje_app',data);
-    this.setState({mensaje:""})
+
   }
 
   handlerSend = (event) =>{
@@ -98,6 +98,9 @@ export default class Chat extends Component {
                   "reply":"",
                   "event":"agregarItem",
                 }
+      let temporal_mensaje  = this.state.mensaje;
+      this.setState({mensaje:""})
+
       /*envío elmensaje al servidor, no espero respuesta*/
       var headers =   new Headers();
       var data    =   new FormData();
@@ -127,14 +130,16 @@ export default class Chat extends Component {
     this.setState({filler: false,activo_teclado:"Inactivo"})
   }
 
-
+  handlerCloseChat = (event) =>{
+    this.props.methods.sobre_escribir_el_estado({screen:"ListaChats"})
+  }
 
   handlerAddfile = (event) =>{
     console.log(event);
   }
 
   microphone = () => {
-    return <NoteVoice  methods={this.props.methods}/>
+    return <TouchableOpacity onPress={this.handlerMicrophone}><NoteVoice styles={styles}  methods={this.props.methods}/></TouchableOpacity>
   }
 
   microphone_ = () => {
@@ -146,7 +151,7 @@ export default class Chat extends Component {
   }
 
   addfile = () => {
-    return <Attachment  methods={this.props.methods}/>
+    return <TouchableOpacity onPress={this.handlerMicrophone}><Attachment styles={styles} methods={this.props.methods}/></TouchableOpacity>
   }
 
   renderDate = (date) => {
@@ -168,9 +173,15 @@ export default class Chat extends Component {
           barStyle="light-content" // or directly
           placement="left"
           centerComponent={{ text: this.props.state.chat.nombre_usuario, style: { color: '#111',fontSize:30 } }}
-          leftComponent={{ type: 'font-awesome', icon: 'chevron-left', onPress: () => this.props.methods.sobre_escribir_el_estado({screen:"ListaChats"}) }}
+          leftComponent={
+            <TouchableOpacity onPress={this.handlerCloseChat}>
+              <View style={{marginLeft: 12}} >
+                <Icon name="chevron-left"  size={20} color="#BBBBBB"/>
+              </View>
+            </TouchableOpacity>
+          }
           rightComponent={
-            <View style={styles.inputContainer}>
+            <View style={styles.inputContainerNoColors}>
               {
                 this.addfile()
               }
@@ -342,6 +353,24 @@ const styles = StyleSheet.create({
     alignItems:'center',
     flex:1,
     marginRight:10,
+  },
+  inputContainerNoColors: {
+    flexDirection: 'row',
+    alignItems:'center',
+    flex:1,
+  },
+  inputIcons: {
+    borderBottomColor: '#F5FCFF',
+    backgroundColor: '#FFFFFF',
+    borderRadius:30,
+    borderBottomWidth: 1,
+    height:40,
+    width:40,
+    marginRight:5,
+    marginLeft: 5,
+    alignItems:'center',
+    padding: 10,
+    textAlign: 'center',
   },
   inputs:{
     height:40,

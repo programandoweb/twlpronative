@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Image } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { Card, Input , Button , FormInput  } from 'react-native-elements';
 import {Storage} from './../../helpers/Storage';
 import Loading from './Loading';
@@ -57,11 +57,11 @@ class Cards extends Component {
           errorStyle={{ color: 'red' }}
           value={this.state.password}
         />
-        <Button
-          title="Ingresar al Sistema"
-          style={{marginTop:20}}
-          onPress={this.handlerButton}
-        />
+        <View style={{marginTop:30}}>
+          <TouchableOpacity>
+            <Button title="Ingresar al Sistema"  onPress={this.handlerButton}/>
+          </TouchableOpacity>
+        </View>
       </View>
     </Card>
   }

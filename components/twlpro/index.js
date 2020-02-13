@@ -13,7 +13,7 @@ YellowBox.ignoreWarnings([
 ])
 
 const params  = {
-  title:"TWLPro Message 1.0 Beta",
+  title:"TWLPRO",
   Credit:"Desarrollo TWLPro 2020",
   menu:{
     items:[
@@ -118,7 +118,7 @@ class App extends Component {
   render() {
     return (
       <ThemeProvider theme={theme}>
-        <Headers params={params} />
+        <Headers methods={this} state={this.state} params={params} />
         <Body methods={this} state={this.state} params={params} />
       </ThemeProvider>
     );
