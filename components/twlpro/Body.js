@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Text } from 'react-native';
 import ListaChats from './body/ListaChats';
 import OpenChat from './body/OpenChat';
+import {Storage} from './../../helpers/Storage';
 import {Config} from './../../helpers/Config';
 import Login from '../common/Login';
 
@@ -9,7 +10,12 @@ class Body extends Component {
 
   constructor (args) {
     super(args)
-    if (this.props.state.user.usuario_id>0) {
+    if (this.props.state.user.usuario_id==0) {
+      let method  = this.props.methods;
+      Storage.get('user').then(function(data){
+        let set = JSON.parse(data);
+        method.sobre_escribir_el_estado(set);
+      })
     }
   }
 

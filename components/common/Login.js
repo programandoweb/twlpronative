@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, Image } from 'react-native';
 import { Card, Input , Button , FormInput  } from 'react-native-elements';
-//import {Storage} from './../../helpers/Storage';
+import {Storage} from './../../helpers/Storage';
 import Loading from './Loading';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Config} from './../../helpers/Config';
@@ -17,8 +17,9 @@ class Cards extends Component {
   }
 
   setUsuario    = (data)=>{
-    this.props.methods.sobre_escribir_el_estado(data);
+    //this.props.methods.sobre_escribir_el_estado(data);
     this.props.methods.sobre_escribir_el_estado({loading:false});
+    Storage.set("user",data,this.props.methods);
   }
 
   handlerButton =   (event)=>{
