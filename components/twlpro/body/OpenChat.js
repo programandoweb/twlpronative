@@ -151,7 +151,7 @@ export default class Chat extends Component {
   }
 
   addfile = () => {
-    return <TouchableOpacity onPress={this.handlerMicrophone}><Attachment styles={styles} methods={this.props.methods}/></TouchableOpacity>
+    return <Attachment styles={styles} methods={this.props.methods}/>
   }
 
   renderDate = (date) => {
