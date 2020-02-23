@@ -1,24 +1,6 @@
 import React, { Component } from 'react';
 import { View , TouchableOpacity } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome';
-import FilePickerManager from 'react-native-file-picker';
-
-FilePickerManager.showFilePicker(null, (response) => {
-  console.log('Response = ', response);
-
-  if (response.didCancel) {
-    console.log('User cancelled file picker');
-  }
-  else if (response.error) {
-    console.log('FilePickerManager Error: ', response.error);
-  }
-  else {
-    this.setState({
-      file: response
-    });
-  }
-});
-
 
 class Attachment extends Component {
   constructor(props) {
@@ -33,7 +15,7 @@ class Attachment extends Component {
   render() {
     let props  = this.props.props;
     return (
-      <TouchableOpacity>
+      <TouchableOpacity onPress={this.selectOneFile.bind(this)}>
         <Icon name="upload" size={20} color="#BBBBBB" style={this.props.styles.inputIcons}  />
       </TouchableOpacity>
     )
