@@ -10,7 +10,7 @@
     },
     "android": {
       "package": "com.twlpro.chat",
-      "versionCode": 1,
+      "versionCode": 1
     },
     "platforms": [
       "ios",
@@ -33,7 +33,6 @@
     ],
     "ios": {
       "supportsTablet": true
-    },
-    
+    }
   }
 }

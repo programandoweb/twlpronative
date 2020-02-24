@@ -20,8 +20,6 @@ import NoteVoice from '../../common/NoteVoice';
 import Attachment from '../../common/Attachment';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Config} from './../../../helpers/Config';
-import * as FileSystem from 'expo-file-system';
-import base64 from 'base64-js'
 
 export default class Chat extends Component {
 
@@ -137,94 +135,32 @@ export default class Chat extends Component {
   }
 
   setResult    = (data)=>{
-    let yo       = this.props.state.user
-    let obj	=	{}
-    /*
-      file_ext
-      imagen_nueva
-      is_image
-    */
-    if (data.upload_data.is_image) {
-      obj.mensaje			=	'<a target="_blank" href="'+data.upload_data.imagen_nueva+'"><img class="img-thumbnail item" src="'+data.upload_data.imagen_nueva+'"/></a>';
-    }else{
-      var icon	=	'';
-      switch(data.upload_data.file_ext){
-        case ".pdf":
-          icon	=	'<i class="far fa-file-pdf fa-2x"></i>';
-        break;
-        case ".doc":
-        case ".docx":
-          icon	=	'<i class="far fa-file-doc fa-2x"></i>';
-        break;
-        default:
-          icon	=	'<i class="fas fa-file fa-2x"></i>';
-        break;
-      }
-      obj.mensaje			=	'<a target="_blank" href="'+data.response.data.upload_data.imagen_nueva+'">'+icon+'</a>';
-    }
-    obj.mensaje_app		=	data.upload_data.imagen_nueva;
-    //this.setState({mensaje:data.upload_data.imagen_nueva})
+    console.log(data);
+  }
 
-
-    obj	=	{
-                "url":Config.ApiRest + "post?modulo=Chat&m=message&formato=json&u="+yo.token,
-                "name":yo.nombre_usuario,
-                "mensaje":data.upload_data.imagen_nueva,
-                "mensaje_app":data.upload_data.imagen_nueva,
-                "token":this.props.state.token,
-                "ventana":this.props.state.ventana,
-                "reply":"",
-                "event":"agregarItem",
-              }
-
+  handlerAddfile = (details) =>{
     var headers =   new Headers();
-    var data    =   new FormData();
-    let arrays  =   Object.entries(obj);
-    arrays.map(([key,value])=>{
-      data.append (key, value);
-      return value;
-    });
-    let cabecera  =   { headers:headers,
-                        method: "POST",
-                        body: data,
-                      }
-    fetch(Config.ApiRest + "post?modulo=Chat&m=message&formato=json&u="+yo.token,cabecera)
-      .then(response => response.json())
-      .then(data =>
-        this.response(data)
-      )
+    var data = new FormData();
+    for(var k in details){
+      if (details[k] instanceof Array) {
+        for (var detail in details[k]) {
+          data.append(k + '[]', details[k][detail]);
+        }
+      } else {
+        data.append(k, details[k]);
+      }
+    }
 
-  }
-
-  stringToUint8Array  = (str) => {
-    const length = str.length
-    const array = new Uint8Array(new ArrayBuffer(length))
-    for (let i = 0; i < length; i++) array[i] = str.charCodeAt(i)
-    return array
-  }
-
-  handlerAddfile = (result,base64_) =>{
-    let   uri     =   result.uri
-    let   uriParts = uri.split('.');
-    let   fileType = uriParts[uriParts.length - 1];
-
-    var   headers =   new Headers();
-    var   data    =   new FormData();
-          data.append('archivo_base64', base64_ );
-          data.append('archivo_datos', JSON.stringify(result) );
-          data.append('archivo_ext', fileType );
-    let cabecera  =   { headers: {
+    let cabecera  =   { method: 'POST',
+                        headers: {
                           'Accept': 'application/json',
                           'Content-Type': 'multipart/form-data; charset=UTF-8',
                         },
-                        method: "POST",
                         body: data
                       }
     fetch(Config.ApiRest + "post?modulo=Chat&m=UploadViaApp&formato=json",cabecera)
     .then(response => response.json())
-    .then(data =>
-      this.setResult(data)
-    )
+    .then(data => this.setResult(data))
   }
 
   handlerAddfile__ = (result) =>{
