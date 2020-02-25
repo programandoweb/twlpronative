@@ -169,7 +169,7 @@ export default class Chat extends Component {
     obj	=	{
                 "url":Config.ApiRest + "post?modulo=Chat&m=message&formato=json&u="+yo.token,
                 "name":yo.nombre_usuario,
-                "mensaje":data.upload_data.imagen_nueva,
+                "mensaje":obj.mensaje,
                 "mensaje_app":data.upload_data.imagen_nueva,
                 "token":this.props.state.token,
                 "ventana":this.props.state.ventana,

@@ -20,7 +20,14 @@ class Body extends Component {
   }
 
   ActualizaState  = (data)=>{
-    this.props.methods.sobre_escribir_el_estado(data);
+
+    if (data.messages) {
+      //console.log(data.messages);
+      this.props.methods.sobre_escribir_el_estado(data);
+    }else {
+      this.props.methods.sobre_escribir_el_estado({"messages":[]});
+    }
+
     this.props.methods.sobre_escribir_el_estado({loading:false});
   }
 
