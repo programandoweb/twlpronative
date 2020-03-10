@@ -13,12 +13,16 @@ YellowBox.ignoreWarnings([
 ])
 
 const params  = {
-  title:"TWLPRO",
-  Credit:"Desarrollo TWLPro 2020",
-  menu:{
+  title:"InSchool",
+  Credit:"Desarrollo ProgramandoWeb 2020",
+  periodos:[1,2,3,4],
+  style:{
+    borderBottomColor:'#2089DC',
+  },
+  menu2:{
     items:[
       {
-        label:"Plan de estudios",
+        label:"Tareas",
         subtitle:"Creación de tareas y evaluaciones",
         image:'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg',
         color:'#fff',
@@ -34,7 +38,68 @@ const params  = {
         ico:"face",
         icoColor:'#2089DC',
       },{
-        label:"Asistencia",
+        label:"Lista Asistencia",
+        subtitle:"Lista de alumnos por clases",
+        image:'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg',
+        color:'#fff',
+        backgroundColor:'#f2f2f2',
+        ico:"list",
+        icoColor:'#2089DC',
+      },
+    ]
+  },
+  menu4:{
+    items:[
+      {
+        label:"Tareas",
+        subtitle:"Creación de tareas y evaluaciones",
+        image:'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg',
+        color:'#fff',
+        backgroundColor:'#f2f2f2',
+        ico:"book",
+        icoColor:'#2089DC',
+        open:'ListaDeEvaluaciones',
+      },{
+        label:"Alumnos",
+        subtitle:"Lista de todos los estudiantes",
+        image:'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg',
+        color:'#fff',
+        backgroundColor:'#f2f2f2',
+        ico:"face",
+        icoColor:'#2089DC',
+        open:'profesores_alumnos',
+      },{
+        label:"Lista Asistencia",
+        subtitle:"Lista de alumnos por clases",
+        image:'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg',
+        color:'#fff',
+        backgroundColor:'#f2f2f2',
+        ico:"list",
+        icoColor:'#2089DC',
+        open:'profesores_lista_asistenncia',
+      },
+    ]
+  },
+  menu5:{
+    items:[
+      {
+        label:"Tareas",
+        subtitle:"Creación de tareas y evaluaciones",
+        image:'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg',
+        color:'#fff',
+        backgroundColor:'#f2f2f2',
+        ico:"book",
+        icoColor:'#2089DC',
+      },{
+        label:"Alumnos",
+        subtitle:"Lista de todos los estudiantes",
+        image:'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg',
+        color:'#fff',
+        backgroundColor:'#f2f2f2',
+        ico:"face",
+        icoColor:'#2089DC',
+      },{
+        label:"Lista Asistencia",
         subtitle:"Lista de alumnos por clases",
         image:'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg',
         color:'#fff',
@@ -88,38 +153,65 @@ class App extends Component {
       loading: false,
       user: user,
       listaUsuario:[],
+      listaMateriasProfesores:{},
       ajax:false,
-      screen:"ListaChats",
+      screen:"Home",
       messages:[],
       styles:styles,
       data_peticiones:[],
       socket:[],
       loading:false,
+      tareas:{},
+      add_Evaluaciones:{},
     }
   }
 
   componentDidMount() {
-    const socket = socketIO('https://colombia.programandoweb.net:5000', {
+    const socket = socketIO('https://colombia.programandoweb.net:5010/', {
       transports: ['websocket'],
       jsonp: false,
       rejectUnauthorized: false,
     });
     socket.connect();
-      socket.on('connect', () => {
-        console.log('connected to socket server');
-        this.sobre_escribir_el_estado({socket:socket});
-      });
-    }
+    socket.on('connect', () => {
+      this.sobre_escribir_el_estado({socket:socket});
+      console.log('Conectado a ProgramandoWeb Colombia');
+    });
+    socket.on('recargar_tareas', this.recargar_tareas);
+    socket.on('actualizar_tareas', this.actualizar_tareas);
+    socket.on('estatus', this.estatus);
+  }
+
+  componentWillUnmount(){
+    this.state.socket.removeListener('recargar_tareas');
+    this.state.socket.removeListener('actualizar_tareas');
+    this.state.socket.removeListener('estatus');
+  }
 
   sobre_escribir_el_estado  = (data)  =>  {
     this.setState(data);
+  }
+
+  recargar_tareas = (response)=>{
+    console.log(response);
+    this.refs.childMethod.handleChageScreen("ListaDeEvaluaciones",true)
+    //this.sobre_escribir_el_estado({tareas:response.data});
+  }
+
+  actualizar_tareas = (response)=>{
+    //console.log(response);
+    this.sobre_escribir_el_estado({tareas:response.data});
+  }
+
+  estatus = (response)  =>{
+    console.log(response);
   }
 
   render() {
     return (
       <ThemeProvider theme={theme}>
         <Headers methods={this} state={this.state} params={params} />
-        <Body methods={this} state={this.state} params={params} />
+        <Body ref="childMethod" methods={this} state={this.state} params={params} />
       </ThemeProvider>
     );
   }

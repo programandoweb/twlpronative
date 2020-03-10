@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
-import { Text,View,ScrollView,FlatList,StyleSheet,KeyboardAvoidingView,TouchableOpacity } from 'react-native';
-import { Card,ListItem } from 'react-native-elements';
+import { Text,View,ScrollView,FlatList,StyleSheet,KeyboardAvoidingView } from 'react-native';
 import Cards from './body/Cards';
 import Tareas from './body/Tareas';
 import AddTareas from './body/AddTareas';
-import VerEvaluacion from './body/VerEvaluacion';
 import {Storage} from './../../helpers/Storage';
 import {Config} from './../../helpers/Config';
 import Login from '../common/Login';
@@ -24,10 +22,8 @@ class Body extends Component {
     }
   }
 
-  handleChageScreen=(metodo,skip)=>{
-    if (skip==undefined) {
-      this.props.methods.sobre_escribir_el_estado({loading:true});
-    }
+  handleChageScreen=(metodo)=>{
+    this.props.methods.sobre_escribir_el_estado({loading:true});
     var me      =   this.props.state.user;
     var headers =   new Headers();
     var data    =   new FormData();
@@ -44,59 +40,34 @@ class Body extends Component {
       .then(response => response.json())
       .then(data =>this.ActualizaState(data,"tareas")
     );
-    this.props.methods.sobre_escribir_el_estado({screen:metodo,chat:me});
+    this.props.methods.sobre_escribir_el_estado({screen:metodo,chat:me,loading:true});
   }
 
   ActualizaState  = (response,view)=>{
     //this.props.methods.sobre_escribir_el_estado({loading:false,tareas:response.data});
     this.props.methods.sobre_escribir_el_estado({loading:false});
-    if (response.data_peticiones!=undefined) {
-      this.props.methods.sobre_escribir_el_estado({data_peticiones:response.data_peticiones});
-    }
     this.props.methods.actualizar_tareas(response,view);
   }
 
   ListaDeEvaluaciones=()=>{
-    return  <ScrollView style={styles.container}>
-              {
-                  (this.props.state.tareas!=undefined && Object.keys(this.props.state.tareas).length)?Object.entries(this.props.state.tareas).map((v,k) => {
-                    let nombre_materia  = ""
-                    if (v[1][0]!=undefined) {
-                      nombre_materia  = v[1][0].materia + " "+ v[1][0].grado_escolar+ " ("+ v[1][0].seccion+") ";
-                    }
+    console.log(this.props.state.tareas);
+    return  <ScrollView
+              style={styles.container}
+              >
+              <View>{
+                  (this.props.state.tareas!=undefined && this.props.state.tareas.length)?this.props.state.tareas.map((v,k) => {
                     return (
-                      <Card key={k} containerStyle={{ borderBottomColor:this.props.params.style.borderBottomColor,borderBottomWidth:3}}>
-                        <View >
-                          <Text style={styles.title}>{nombre_materia}</Text>
-                            {
-                              (v[1]!=undefined)?v[1].map((v2,k2) => {
-                                return (<TouchableOpacity key={k2} onPress={()=>this.props.methods.sobre_escribir_el_estado({screen:"ver_Evaluacion",add_Evaluaciones:v2})}>
-                                  <ListItem
-                                    roundAvatar
-                                    chevron
-                                    title={<View><Text style={styles.title}>{v2.evaluacion}</Text><Text style={styles.date}>{v2.fecha}</Text></View>}
-                                    bottomDivider
-                                /></TouchableOpacity>)
-                              }):console.log("undefined")
-                            }
-                        </View>
-
-                      </Card>
+                      <Tareas params={this.props.params} key={k} values={v}/>
                     );
                   }):<View><Text></Text></View>
-              }
-
+                }
+              </View>
             </ScrollView>
   }
 
   add_Evaluaciones=()=>{
-    return <AddTareas style={styles} params={this.props.params} state={this.props.state} methods={this.props.methods}/>
+    return <AddTareas params={this.props.params}/>
   }
-
-  ver_Evaluacion=()=>{
-    return <VerEvaluacion style={styles} params={this.props.params} state={this.props.state}/>
-  }
-
 
   home_swicth_usuarios=()=>{
     let menu = "";
@@ -152,10 +123,7 @@ class Body extends Component {
             return(<KeyboardAvoidingView style={styles.container} behavior="padding" enabled><Topbar name="Evaluaciones" back="Home" add="add_Evaluaciones" methods={this.props.methods}/>{this.ListaDeEvaluaciones()}</KeyboardAvoidingView>)
           break;
           case "add_Evaluaciones":
-            return(<KeyboardAvoidingView style={styles.container} behavior="padding" enabled><Topbar name="Evaluación" back="ListaDeEvaluaciones" methods={this.props.methods}/>{this.add_Evaluaciones()}</KeyboardAvoidingView>)
-          break;
-          case "ver_Evaluacion":
-            return(<KeyboardAvoidingView style={styles.container} behavior="padding" enabled><Topbar name="Evaluación" back="ListaDeEvaluaciones" methods={this.props.methods}/>{this.ver_Evaluacion()}</KeyboardAvoidingView>)
+            return(<KeyboardAvoidingView style={styles.container} behavior="padding" enabled><Topbar name="Agregar Evaluación" back="ListaDeEvaluaciones" methods={this.props.methods}/>{this.add_Evaluaciones()}</KeyboardAvoidingView>)
           break;
           case "profesores_alumnos":
             return(<KeyboardAvoidingView style={styles.container} behavior="padding" enabled>{this.ListaDeEvaluaciones()}</KeyboardAvoidingView>)
@@ -187,17 +155,6 @@ const styles = StyleSheet.create({
   },
   container:{
     flex:1
-  },
-  date:{
-    fontSize:14,
-    marginBottom: 20,
-  },
-  mr:{
-    marginRight: 10
-  },
-  title:{
-    fontSize:14,
-    fontWeight: 'bold',
   },
   list:{
     paddingHorizontal: 17,
@@ -284,12 +241,4 @@ const styles = StyleSheet.create({
     borderRadius:300,
     padding:5,
   },
-  select:{
-
-  },
-  textarea:{
-    borderWidth: 1,
-    borderColor: "#d2d2d2",
-    padding: 5,
-  }
 });

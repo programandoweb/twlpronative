@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { View , TouchableOpacity } from 'react-native'
+import { View , TouchableOpacity, Text } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome';
 //import { DocumentPicker } from 'expo';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
 import base64 from 'base64-js'
+import { Button } from 'react-native-elements';
 
 class Attachment extends Component {
   constructor(props) {
@@ -33,8 +34,20 @@ class Attachment extends Component {
     let props  = this.props.props;
 
     return (
-      <TouchableOpacity onPress={this.pickDocument}>
-        <Icon name="upload" size={20} color="#BBBBBB" style={this.props.styles.inputIcons}  />
+      <TouchableOpacity >
+        <View>
+          <Button onPress={this.pickDocument}
+                  icon={
+                        <Icon
+                          name="cloud-upload"
+                          size={15}
+                          color="white"
+                          style={{marginRight:10}}
+                        />
+                  }
+                  title="Subir Archivo Material de apoyo"
+          />
+        </View>
       </TouchableOpacity>
     )
   }

@@ -13,9 +13,8 @@ const Storage = {
     return AsyncStorage.getItem(key);
   },
   clear:(method)=>{
-    console.log(321);
     AsyncStorage.clear();
-    method.sobre_escribir_el_estado({user:{}});
+    method.sobre_escribir_el_estado({user:{},data_peticiones:[],screen:"home"});
   },
 };
 

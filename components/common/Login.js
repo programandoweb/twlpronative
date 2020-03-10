@@ -11,15 +11,14 @@ class Cards extends Component {
   constructor (args) {
     super(args)
     this.state = {
-      login: "lic.jorgemendez",
+      login: "erick",
       password: "123456",
     }
   }
 
   setUsuario    = (data)=>{
-    //this.props.methods.sobre_escribir_el_estado(data);
     this.props.methods.sobre_escribir_el_estado({loading:false});
-    Storage.set("user",data,this.props.methods);
+    Storage.set("user",data.store,this.props.methods);
   }
 
   handlerButton =   (event)=>{
@@ -32,7 +31,7 @@ class Cards extends Component {
                         method: "POST",
                         body: data
                       }
-    fetch(Config.ApiRest + "post?modulo=Chat&m=Login&formato=json",cabecera)
+    fetch(Config.ApiRest + "post?modulo=Usuarios&m=login&formato=json",cabecera)
       .then(response => response.json())
       .then(data =>
         this.setUsuario(data.response)
