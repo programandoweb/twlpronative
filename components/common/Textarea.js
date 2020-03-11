@@ -20,16 +20,17 @@ export class Textarea extends Component {
           multiline
           numberOfLines={6}
           style={styles.inputs}
-          onChangeText={(text)=>{this.setState({mensaje:text});}}
+          onChangeText={(text)=>{this.props.Object.setState({descripcion:text});}}
           placeholder="Descripción, temas y aspectos de la evaluación"
           underlineColorAndroid='transparent'
-          value={this.state.mensaje}
+          value={this.props.Object.state.mensaje}
         />
 
     );
   }
 
 }export default Textarea;
+
 const styles = StyleSheet.create({
   inputs:{
     height:90,

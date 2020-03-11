@@ -2,25 +2,33 @@ import React, { Component } from 'react';
 import { View , TouchableOpacity, Text } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import * as DocumentPicker from 'expo-document-picker';
+import * as FileSystem from 'expo-file-system';
 import base64 from 'base64-js'
 import { Button } from 'react-native-elements';
-import { Upload,Convertir_base64 }  from '../../helpers/Functions';
+import { Upload }  from '../../helpers/Functions';
 
 class Attachment extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      singleFile: '',
+      multipleFile: [],
+
+    };
   }
+
 
   pickDocument = async () => {
     const result = await DocumentPicker.getDocumentAsync({});
     if (result.type!=="cancel") {
+      let base64,Upload_post;
       try{
-        Convertir_base64(result).then(v => {
-          this.props.Object.setState({"singleFile":v,result_singleFile:result})
-        })
+        base64  = await FileSystem.readAsStringAsync(  result.uri,{
+                                                                      encoding: FileSystem.EncodingType.Base64,
+                                                                  });
+        
       }catch(e){
-        this.props.setState({"singleFile":"Error Convertir base64"})
-        console.log("Error Convertir base64");
+        console.log(e);
       }
     }else{
       console.log(result.type);

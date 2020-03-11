@@ -18,9 +18,10 @@ class Headers extends Component {
     return (
         <Header
           placement="left"
-          centerComponent={
+          centerComponent={{ text: this.props.params.title, style: { color: '#FFFFFF' } }}
+          leftComponent={
             <TouchableOpacity onPress={this.handlerHome}>
-              <View><Text style={{marginLeft: 6,color: '#FFFFFF',fontWeight: 'bold', fontSize: 20,}}>{this.props.params.title}</Text></View>
+              <View style={{marginLeft: 15}}><Icon name="home" size={25} color="#FFFFFF" /></View>
             </TouchableOpacity>
           }
           rightComponent={

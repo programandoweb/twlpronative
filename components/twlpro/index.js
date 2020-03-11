@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import { StyleSheet, YellowBox } from 'react-native';
+import { StyleSheet, YellowBox , Platform, BackHandler} from 'react-native';
 import { ThemeProvider } from 'react-native-elements';
 import {storage,UserDefault} from './../../helpers/Storage';
+import {Back} from './../../helpers/Functions';
+import Modal from '../common/Modal';
 import Headers from './Headers';
 import Body from './Body';
 import socketIO from 'socket.io-client';
@@ -65,11 +67,11 @@ const params  = {
         image:'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg',
         color:'#fff',
         backgroundColor:'#f2f2f2',
-        ico:"face",
+        ico:"child",
         icoColor:'#2089DC',
-        open:'profesores_alumnos',
+        open:'ListaDeMisAlumnos',
       },{
-        label:"Lista Asistencia",
+        label:"Asistencia",
         subtitle:"Lista de alumnos por clases",
         image:'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg',
         color:'#fff',
@@ -118,6 +120,9 @@ const params  = {
 
 
 const styles = StyleSheet.create({
+  keyboard: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     padding: 30,
@@ -150,6 +155,7 @@ class App extends Component {
   constructor (args) {
     super(args)
     this.state = {
+      navigation:[],
       loading: false,
       user: user,
       listaUsuario:[],
@@ -163,6 +169,12 @@ class App extends Component {
       loading:false,
       tareas:{},
       add_Evaluaciones:{},
+      upload:{},
+      modal:{ isVisible:false,
+              title:"Atención",
+              messages:"Hola, soy una modal...",
+              height: "auto"
+            }
     }
   }
 
@@ -180,12 +192,20 @@ class App extends Component {
     socket.on('recargar_tareas', this.recargar_tareas);
     socket.on('actualizar_tareas', this.actualizar_tareas);
     socket.on('estatus', this.estatus);
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick.bind(this))
   }
 
   componentWillUnmount(){
     this.state.socket.removeListener('recargar_tareas');
     this.state.socket.removeListener('actualizar_tareas');
     this.state.socket.removeListener('estatus');
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick.bind(this));
+  }
+
+  handleBackButtonClick() {
+    //console.log(this.state.navigation);
+    Back(this);
+    return true;
   }
 
   sobre_escribir_el_estado  = (data)  =>  {
@@ -193,13 +213,10 @@ class App extends Component {
   }
 
   recargar_tareas = (response)=>{
-    console.log(response);
     this.refs.childMethod.handleChageScreen("ListaDeEvaluaciones",true)
-    //this.sobre_escribir_el_estado({tareas:response.data});
   }
 
   actualizar_tareas = (response)=>{
-    //console.log(response);
     this.sobre_escribir_el_estado({tareas:response.data});
   }
 
@@ -207,12 +224,18 @@ class App extends Component {
     console.log(response);
   }
 
+  _render=()=>{
+    return  <ThemeProvider theme={theme}>
+              {(Platform.OS!=='web')?<Modal methods={this} state={this.state}/>:<></>}
+              <Headers methods={this} state={this.state} params={params} />
+              <Body ref="childMethod" methods={this} state={this.state} params={params} />
+            </ThemeProvider>
+
+  }
+
   render() {
     return (
-      <ThemeProvider theme={theme}>
-        <Headers methods={this} state={this.state} params={params} />
-        <Body ref="childMethod" methods={this} state={this.state} params={params} />
-      </ThemeProvider>
+      this._render()
     );
   }
 }

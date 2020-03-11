@@ -9,7 +9,8 @@ class Tareas extends Component {
                               borderBottomWidth:3
                             }}>
         <ListItem
-          chevron
+          bottomDivider
+          style={{padding: 0,margin: 0,}}
           title={<View><Text style={{ marginLeft: 5, }}>{this.props.values.evaluacion}</Text></View>}
           subtitle={<View><Text style={{ marginLeft: 5, }}>{this.props.values.fecha}</Text></View>}
         />

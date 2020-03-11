@@ -5,12 +5,10 @@ import Cards from './body/Cards';
 import AddTareas from './body/AddTareas';
 import VerEvaluacion from './body/VerEvaluacion';
 import {Storage} from './../../helpers/Storage';
-import {Array_search} from './../../helpers/Functions';
 import {Config} from './../../helpers/Config';
 import Login from '../common/Login';
 import Loading from '../common/Loading';
 import Topbar from '../common/Topbar';
-import Icon from 'react-native-vector-icons/FontAwesome';
 
 class Body extends Component {
 
@@ -25,13 +23,10 @@ class Body extends Component {
     }
   }
 
-  handleChageScreen=(metodo,skip,navigation)=>{
-    if (skip==undefined || skip===false) {
+  handleChageScreen=(metodo,skip)=>{
+    if (skip==undefined) {
       this.props.methods.sobre_escribir_el_estado({loading:true});
     }
-
-    Array_search(this.props.state.navigation,navigation,this.props);
-
     var me      =   this.props.state.user;
     var headers =   new Headers();
     var data    =   new FormData();
@@ -61,15 +56,10 @@ class Body extends Component {
     this.props.methods.actualizar_tareas(response,view);
   }
 
-  handleChageScreenNoAjax=(v)=>{
-    Array_search(this.props.state.navigation,"ListaDeEvaluaciones",this.props);
-    this.props.methods.sobre_escribir_el_estado({screen:"ver_Evaluacion",add_Evaluaciones:v})
-  }
-
   ListaDeEvaluaciones=()=>{
     return  <KeyboardAvoidingView style={styles.keyboard} behavior="padding" enabled>
               <ScrollView style={styles.container}>
-                <Topbar name="Evaluaciones" back="Home" add="add_Evaluaciones" methods={this.props.methods} props={this.props}/>
+                <Topbar name="Evaluaciones" back="Home" add="add_Evaluaciones" methods={this.props.methods}/>
                 {
                     (this.props.state.tareas!=undefined && Object.keys(this.props.state.tareas).length)?Object.entries(this.props.state.tareas).map((v,k) => {
                       let nombre_materia  = ""
@@ -84,7 +74,7 @@ class Body extends Component {
                                 (v[1]!=undefined)?v[1].map((v2,k2) => {
                                   return (<TouchableOpacity
                                               key={k2}
-                                              onPress={()=>this.handleChageScreenNoAjax(v2)}>
+                                              onPress={()=>this.props.methods.sobre_escribir_el_estado({screen:"ver_Evaluacion",add_Evaluaciones:v2})}>
                                     <ListItem
                                       containerStyle={{paddingLeft:0, paddingBottom: 0}}
                                       roundAvatar
@@ -107,7 +97,7 @@ class Body extends Component {
   add_Evaluaciones=()=>{
     return <KeyboardAvoidingView style={styles.keyboard} behavior="padding" enabled>
               <ScrollView style={styles.container}>
-                <Topbar name="Evaluación" back="ListaDeEvaluaciones" methods={this.props.methods} props={this.props}/>
+                <Topbar name="Evaluación" back="ListaDeEvaluaciones" methods={this.props.methods}/>
                 <AddTareas style={styles} params={this.props.params} state={this.props.state} methods={this.props.methods}/>
               </ScrollView>
             </KeyboardAvoidingView>
@@ -116,7 +106,7 @@ class Body extends Component {
   ver_Evaluacion=()=>{
     return  <KeyboardAvoidingView style={styles.keyboard} behavior="padding" enabled>
               <ScrollView style={styles.container}>
-                <Topbar name="Evaluación" back="ListaDeEvaluaciones" methods={this.props.methods} props={this.props}/>
+                <Topbar name="Evaluación" back="ListaDeEvaluaciones" methods={this.props.methods}/>
                 <VerEvaluacion style={styles} params={this.props.params} state={this.props.state}/>
               </ScrollView>
             </KeyboardAvoidingView>
@@ -138,26 +128,11 @@ class Body extends Component {
         return <ScrollView
                   style={styles.container}
                 >{
-                  <View style={{flex: 1,flexDirection: 'row', justifyContent: 'space-between', marginTop: 10, marginBottom: 10,}}>
+                  <View>
                       {
                         menu.map((v,k) => {
                           return (
-                            <TouchableOpacity
-                              onPress={() => { this.handleChageScreen(v.open,false,"Home")  }}
-                              key={k} style={{  margin:10,
-                                                height:100,
-                                                flex: 0.33,
-                                                padding: 15,
-                                                backgroundColor: "#F2f2f2",
-                                                alignSelf: 'center',
-                                                textAlign: 'center',
-                                                alignContent: 'center'
-                                              }}>
-                              <Icon style={{alignSelf: 'center', marginBottom: 10,}} name={v.ico} size={35} color="#333333" />
-                              <Text style={{textAlign: 'center'}}>
-                                {v.label}
-                              </Text>
-                            </TouchableOpacity>
+                            <Cards key={k} values={v} handleChageScreen={this.handleChageScreen}/>
                           );
                         })
                       }
@@ -191,7 +166,7 @@ class Body extends Component {
   }
 
   render() {
-    //console.log(this.props.state.navigation);
+    //console.log(this.props.methods);
     if (this.props.state.user.usuario_id>0) {
       if (!this.props.state.loading) {
         switch (this.props.state.screen) {
@@ -212,7 +187,7 @@ class Body extends Component {
           break;
           case "Home":
           default:
-            return(this.home_swicth_usuarios())
+            return(<KeyboardAvoidingView style={styles.keyboard} behavior="padding" enabled>{this.home_swicth_usuarios()}</KeyboardAvoidingView>)
           break;
         }
       }else {
