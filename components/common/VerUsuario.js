@@ -1,0 +1,56 @@
+import React, { Component } from 'react';
+import { View,  Text, KeyboardAvoidingView, TouchableOpacity, ScrollView,Linking } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { Card,Button,Avatar } from 'react-native-elements';
+import Topbar from './Topbar';
+
+class App extends Component {
+  render() {
+    console.log(this.props.state.common);
+
+    return (  <KeyboardAvoidingView style={this.props.styles.keyboard} behavior="padding" enabled>
+                <ScrollView style={this.props.styles.container}>
+                  <Topbar name="Usuario" back="ListaDeEvaluaciones" methods={this.props.methods} props={this.props}/>
+                  <Card containerStyle={{ borderBottomColor:this.props.params.style.borderBottomColor,
+                                          borderBottomWidth:3
+                                        }}>
+                    <View style={{flexDirection: 'row'}}>
+                      <View style={{flex:0.2}}>
+                        <Avatar
+                          xlarge
+                          rounded
+                          source={{uri: this.props.state.common.avatar}}
+                          activeOpacity={0.7}
+                        />
+                      </View>
+                      <View style={{flex:0.8}}>
+                        <Text style={this.props.styles.title}>
+                          {this.props.state.common.alumno}
+                        </Text>
+                        <Text style={this.props.styles.title}>
+                          {this.props.state.common.grado} ({this.props.state.common.seccion})
+                        </Text>
+                        <Text style={this.props.styles.fecha}>
+                          Código: {this.props.state.common.identificacion}
+                        </Text>
+                        <Text style={this.props.styles.fecha}>
+                          Teléfono: {this.props.state.common.telefono}
+                        </Text>
+                        <Text style={this.props.styles.title}>
+                          Acudiente {this.props.state.common.acudiente}
+                        </Text>
+                        <Text style={this.props.styles.fecha}>
+                          Tel Acudiente {this.props.state.common.acudiente_telefono}
+                        </Text>
+                        <Text style={this.props.styles.fecha}>
+                          Email Acudiente {this.props.state.common.acudiente_email}
+                        </Text>
+                      </View>
+                    </View>
+                  </Card>
+                </ScrollView>
+              </KeyboardAvoidingView>
+    );
+  }
+}
+export default App;

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { Card, Input , Button , FormInput  } from 'react-native-elements';
+import { Card, Input , Button } from 'react-native-elements';
 import {Storage} from './../../helpers/Storage';
 import Loading from './Loading';
 import Icon from 'react-native-vector-icons/FontAwesome';

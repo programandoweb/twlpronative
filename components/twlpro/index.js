@@ -160,6 +160,7 @@ class App extends Component {
       user: user,
       listaUsuario:[],
       listaMateriasProfesores:{},
+      SearchFilter:[],
       ajax:false,
       screen:"Home",
       messages:[],
@@ -217,7 +218,7 @@ class App extends Component {
   }
 
   actualizar_tareas = (response)=>{
-    this.sobre_escribir_el_estado({tareas:response.data});
+    this.sobre_escribir_el_estado({list:response.data});
   }
 
   estatus = (response)  =>{

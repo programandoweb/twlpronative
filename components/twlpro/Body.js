@@ -2,12 +2,15 @@ import React, { Component } from 'react';
 import { Text,View,ScrollView,FlatList,StyleSheet,KeyboardAvoidingView,TouchableOpacity } from 'react-native';
 import { Card,ListItem } from 'react-native-elements';
 import Cards from './body/Cards';
-import AddTareas from './body/AddTareas';
-import VerEvaluacion from './body/VerEvaluacion';
+import ListaDeEvaluaciones from './tareas/ListaDeEvaluaciones';
+import AddEvaluaciones from './tareas/AddEvaluaciones';
+import VerEvaluacion from './tareas/VerEvaluacion';
+import VerUsuario from '../common/VerUsuario';
 import {Storage} from './../../helpers/Storage';
 import {Array_search} from './../../helpers/Functions';
 import {Config} from './../../helpers/Config';
 import Login from '../common/Login';
+import ListaDeUsuarios from '../common/ListaDeUsuarios';
 import Loading from '../common/Loading';
 import Topbar from '../common/Topbar';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -46,13 +49,12 @@ class Body extends Component {
                       }
     fetch(Config.ApiRest + "get?modulo=Profesores&m="+metodo+"&formato=json&u="+me.token,cabecera)
       .then(response => response.json())
-      .then(data =>this.ActualizaState(data,"tareas")
+      .then(data =>this.ActualizaState(data)
     );
     this.props.methods.sobre_escribir_el_estado({screen:metodo,chat:me});
   }
 
   ActualizaState  = (response,view)=>{
-    //this.props.methods.sobre_escribir_el_estado({loading:false,tareas:response.data});
     this.props.methods.sobre_escribir_el_estado({loading:false});
     if (response.data_peticiones!=undefined) {
       this.props.methods.sobre_escribir_el_estado({data_peticiones:response.data_peticiones});
@@ -61,65 +63,15 @@ class Body extends Component {
     this.props.methods.actualizar_tareas(response,view);
   }
 
-  handleChageScreenNoAjax=(v)=>{
-    Array_search(this.props.state.navigation,"ListaDeEvaluaciones",this.props);
-    this.props.methods.sobre_escribir_el_estado({screen:"ver_Evaluacion",add_Evaluaciones:v})
-  }
-
-  ListaDeEvaluaciones=()=>{
-    return  <KeyboardAvoidingView style={styles.keyboard} behavior="padding" enabled>
-              <ScrollView style={styles.container}>
-                <Topbar name="Evaluaciones" back="Home" add="add_Evaluaciones" methods={this.props.methods} props={this.props}/>
-                {
-                    (this.props.state.tareas!=undefined && Object.keys(this.props.state.tareas).length)?Object.entries(this.props.state.tareas).map((v,k) => {
-                      let nombre_materia  = ""
-                      if (v[1][0]!=undefined) {
-                        nombre_materia  = v[1][0].materia + " "+ v[1][0].grado_escolar+ " ("+ v[1][0].seccion+") ";
-                      }
-                      return (
-                        <Card key={k} containerStyle={{ borderBottomColor:this.props.params.style.borderBottomColor,borderBottomWidth:3}}>
-                          <View >
-                            <Text style={styles.title}>{nombre_materia}</Text>
-                              {
-                                (v[1]!=undefined)?v[1].map((v2,k2) => {
-                                  return (<TouchableOpacity
-                                              key={k2}
-                                              onPress={()=>this.handleChageScreenNoAjax(v2)}>
-                                    <ListItem
-                                      containerStyle={{paddingLeft:0, paddingBottom: 0}}
-                                      roundAvatar
-                                      chevron
-                                      title={<View><Text style={styles.title}>{v2.evaluacion}</Text><Text style={styles.date}>{v2.fecha}</Text></View>}
-                                      bottomDivider
-                                  /></TouchableOpacity>)
-                                }):console.log("undefined")
-                              }
-                          </View>
-
-                        </Card>
-                      );
-                    }):<View><Text></Text></View>
-                }
-              </ScrollView>
-            </KeyboardAvoidingView>
-  }
-
-  add_Evaluaciones=()=>{
-    return <KeyboardAvoidingView style={styles.keyboard} behavior="padding" enabled>
-              <ScrollView style={styles.container}>
-                <Topbar name="Evaluación" back="ListaDeEvaluaciones" methods={this.props.methods} props={this.props}/>
-                <AddTareas style={styles} params={this.props.params} state={this.props.state} methods={this.props.methods}/>
-              </ScrollView>
-            </KeyboardAvoidingView>
-  }
-
-  ver_Evaluacion=()=>{
-    return  <KeyboardAvoidingView style={styles.keyboard} behavior="padding" enabled>
-              <ScrollView style={styles.container}>
-                <Topbar name="Evaluación" back="ListaDeEvaluaciones" methods={this.props.methods} props={this.props}/>
-                <VerEvaluacion style={styles} params={this.props.params} state={this.props.state}/>
-              </ScrollView>
-            </KeyboardAvoidingView>
+  handleChageScreenNoAjax=(v,view,back)=>{
+    if (view==undefined) {
+      let view  = "ver_Evaluacion";
+    }
+    if (back==undefined) {
+      let back  = "ListaDeEvaluaciones";
+    }
+    Array_search(this.props.state.navigation,view,this.props);
+    this.props.methods.sobre_escribir_el_estado({screen:view,add_Evaluaciones:v,common:v,})
   }
 
   ListaDeMisAlumnos=()=>{
@@ -150,7 +102,6 @@ class Body extends Component {
                                                 padding: 15,
                                                 backgroundColor: "#F2f2f2",
                                                 alignSelf: 'center',
-                                                textAlign: 'center',
                                                 alignContent: 'center'
                                               }}>
                               <Icon style={{alignSelf: 'center', marginBottom: 10,}} name={v.ico} size={35} color="#333333" />
@@ -196,16 +147,19 @@ class Body extends Component {
       if (!this.props.state.loading) {
         switch (this.props.state.screen) {
           case "ListaDeEvaluaciones":
-            return(this.ListaDeEvaluaciones())
+            return(<ListaDeEvaluaciones handleChageScreenNoAjax={this.handleChageScreenNoAjax} state={this.props.state} params={this.props.params} styles={styles}  methods={this.props.methods} props={this.props}/>)
           break;
           case "add_Evaluaciones":
-            return(this.add_Evaluaciones())
+            return(<AddEvaluaciones styles={styles} state={this.props.state} params={this.props.params}  methods={this.props.methods} props={this.props}/>)
           break;
           case "ver_Evaluacion":
-            return(this.ver_Evaluacion())
+            return(<VerEvaluacion styles={styles} state={this.props.state} params={this.props.params}  methods={this.props.methods} props={this.props}/>)
           break;
           case "ListaDeMisAlumnos":
-            return(this.ListaDeMisAlumnos())
+            return(<ListaDeUsuarios handleChageScreenNoAjax={this.handleChageScreenNoAjax} styles={styles} state={this.props.state} params={this.props.params}  methods={this.props.methods} props={this.props}/>)
+          break;
+          case "ver_Alumno":
+            return(<VerUsuario styles={styles} state={this.props.state} params={this.props.params}  methods={this.props.methods} props={this.props}/>)
           break;
           case "profesores_lista_asistenncia":
             return(this.add_Evaluaciones())
@@ -242,11 +196,14 @@ const styles = StyleSheet.create({
     fontSize:14,
     marginBottom: 20,
   },
+  email:{
+    fontSize:10,
+  },
   mr:{
     marginRight: 10
   },
   title:{
-    fontSize:14,
+    fontSize:11,
     fontWeight: 'bold',
   },
   list:{
