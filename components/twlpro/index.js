@@ -218,7 +218,7 @@ class App extends Component {
   }
 
   actualizar_tareas = (response)=>{
-    this.sobre_escribir_el_estado({list:response.data});
+    this.sobre_escribir_el_estado({list:response.response.data});
   }
 
   estatus = (response)  =>{

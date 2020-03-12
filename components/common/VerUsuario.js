@@ -3,6 +3,7 @@ import { View,  Text, KeyboardAvoidingView, TouchableOpacity, ScrollView,Linking
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Card,Button,Avatar } from 'react-native-elements';
 import Topbar from './Topbar';
+import {Config} from '../../helpers/Config';
 
 class App extends Component {
   render() {
@@ -17,7 +18,7 @@ class App extends Component {
                         <Avatar
                           xlarge
                           rounded
-                          source={{uri: this.props.state.common.avatar}}
+                          source={{uri: Config.images+this.props.state.common.avatar}}
                           activeOpacity={0.7}
                         />
                       </View>
@@ -29,9 +30,6 @@ class App extends Component {
                           {this.props.state.common.grado} ({this.props.state.common.seccion})
                         </Text>
                         <Text style={this.props.styles.fecha}>
-                          Código: {this.props.state.common.identificacion}
-                        </Text>
-                        <Text style={this.props.styles.fecha}>
                           Teléfono: {this.props.state.common.telefono}
                         </Text>
                         <Text style={this.props.styles.title}>
@@ -39,9 +37,6 @@ class App extends Component {
                         </Text>
                         <Text style={this.props.styles.fecha}>
                           Tel Acudiente {this.props.state.common.acudiente_telefono}
-                        </Text>
-                        <Text style={this.props.styles.fecha}>
-                          Email Acudiente {this.props.state.common.acudiente_email}
                         </Text>
                       </View>
                     </View>
