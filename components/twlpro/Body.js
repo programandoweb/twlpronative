@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text,View,ScrollView,FlatList,StyleSheet,KeyboardAvoidingView,TouchableOpacity } from 'react-native';
+import { Text,View,ScrollView,FlatList,StyleSheet,KeyboardAvoidingView,TouchableOpacity,Platform } from 'react-native';
 import { Card,ListItem } from 'react-native-elements';
 import Cards from './body/Cards';
 import ListaDeEvaluaciones from './tareas/ListaDeEvaluaciones';
@@ -33,7 +33,6 @@ class Body extends Component {
       this.props.methods.sobre_escribir_el_estado({loading:true});
     }
 
-    //console.log(navigation,this.props.state.navigation);
     Array_search(this.props.state.navigation,navigation,this.props);
 
     var me      =   this.props.state.user;
@@ -48,11 +47,44 @@ class Body extends Component {
                         method: "POST",
                         body: data
                       }
-    fetch(Config.ApiRest + "get?modulo=Profesores&m="+metodo+"&formato=json&u="+me.token,cabecera)
+
+    if (this.props.state.skipData.length>0) {
+      data.append ("skipData",this.props.state.skipData);
+      fetch(Config.ApiRest + "get?modulo=Profesores&m="+metodo+"&formato=json&u="+me.token,cabecera)
+        .then(response => response.json())
+        .then(data =>this.ActualizaState(data))
+        .catch((error) => {
+          let obj = {
+            isVisible:true,
+            title:"Atención",
+            messages:"no hubo respuesta del servidor, compruebe su conexión a internet",
+            height: "auto",
+          }
+          if (Platform.OS==='web') {
+            console.log(obj,error);
+          }else {
+            Object.props.methods.sobre_escribir_el_estado({modal:obj})
+          }
+        });
+    }else {
+      fetch(Config.ApiRest + "get?modulo=Profesores&m="+metodo+"&formato=json&u="+me.token,cabecera)
       .then(response => response.json())
-      .then(data =>this.ActualizaState(data)
-    );
-    this.props.methods.sobre_escribir_el_estado({screen:metodo,chat:me});
+      .then(data =>this.ActualizaState(data))
+      .catch((error) => {
+        let obj = {
+          isVisible:true,
+          title:"Atención",
+          messages:"no hubo respuesta del servidor, compruebe su conexión a internet",
+          height: "auto",
+        }
+        if (Platform.OS==='web') {
+          console.log(obj,error);
+        }else {
+          Object.props.methods.sobre_escribir_el_estado({modal:obj})
+        }
+      });
+    }
+      this.props.methods.sobre_escribir_el_estado({screen:metodo,chat:me});
   }
 
   ActualizaState  = (response,view)=>{
@@ -129,11 +161,14 @@ class Body extends Component {
   }
 
   render() {
-    //console.log(this.props.state.navigation);
+    //console.log(this.props.state.skipData);
     if (this.props.state.user.usuario_id>0) {
       if (!this.props.state.loading) {
         switch (this.props.state.screen) {
           case "ListaDeEvaluaciones":
+            /*
+              PASÉ UN PROPS MÁS (handleChageScreenNoAjax) QUE ES UNA VENTANA QUE NO REQUIRE HACER LLAMADOS VÍA AJAX
+            */
             return(<ListaDeEvaluaciones handleChageScreenNoAjax={this.handleChageScreenNoAjax} state={this.props.state} params={this.props.params} styles={styles}  methods={this.props.methods} props={this.props}/>)
           break;
           case "add_Evaluaciones":
@@ -143,7 +178,11 @@ class Body extends Component {
             return(<VerEvaluacion styles={styles} state={this.props.state} params={this.props.params}  methods={this.props.methods} props={this.props}/>)
           break;
           case "ListaDeMisAlumnos":
-            return(<ListaDeUsuarios handleChageScreenNoAjax={this.handleChageScreenNoAjax} styles={styles} state={this.props.state} params={this.props.params}  methods={this.props.methods} props={this.props}/>)
+            /*
+              PASÉ UN PROPS MÁS QUE ES EL BACK PORQUE ES UN COMPONENTE COMPARTIDO
+              Y NECESITO INDICARLE DONDE HARÁ VUELTA ESTE LISTADO
+            */
+            return(<ListaDeUsuarios back={"ListaDeMisAlumnos"} handleChageScreenNoAjax={this.handleChageScreenNoAjax} styles={styles} state={this.props.state} params={this.props.params}  methods={this.props.methods} props={this.props}/>)
           break;
           case "ver_Alumno":
             return(<VerUsuario styles={styles} state={this.props.state} params={this.props.params}  methods={this.props.methods} props={this.props}/>)

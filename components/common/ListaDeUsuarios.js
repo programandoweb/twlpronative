@@ -6,6 +6,7 @@ import {Config} from '../../helpers/Config';
 import SearchFilter from './SearchFilter';
 
 class ListaDeUsuarios extends Component {
+
   render() {
     return (  <KeyboardAvoidingView style={ this.props.styles.keyboard} behavior="padding" enabled>
                 <ScrollView style={ this.props.styles.container}>
@@ -24,9 +25,11 @@ class ListaDeUsuarios extends Component {
                             {
                               (v!=undefined)?v[1].map((v2,k2) => {
                                 //console.log(Config.images,v2);
+                                //console.log(v2)
+                                //skipUsuario
                                 return (<TouchableOpacity
                                             key={k2}
-                                            onPress={()=>this.props.handleChageScreenNoAjax(v2,"ver_Alumno","ListaDeUsuarios")}>
+                                            onPress={()=>this.props.handleChageScreenNoAjax(v2,"ver_Alumno",this.props.back)}>
                                   <ListItem
                                     roundAvatar
                                     leftAvatar={{ source: { uri: Config.images+v2.avatar } }}

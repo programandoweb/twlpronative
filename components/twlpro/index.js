@@ -158,6 +158,7 @@ class App extends Component {
       navigation:[],
       loading: false,
       user: user,
+      skipData:[],
       listaUsuario:[],
       listaMateriasProfesores:{},
       SearchFilter:[],
@@ -219,6 +220,13 @@ class App extends Component {
 
   actualizar_tareas = (response)=>{
     this.sobre_escribir_el_estado({list:response.response.data});
+    if (response.response.skipData!=undefined) {
+      this.sobre_escribir_el_estado({skipData:response.response.skipData});
+    }
+    if (response.response.data_peticiones!=undefined) {
+      //console.log(response.response.data_peticiones);
+      this.sobre_escribir_el_estado({data_peticiones:response.response.data_peticiones});
+    }
   }
 
   estatus = (response)  =>{
