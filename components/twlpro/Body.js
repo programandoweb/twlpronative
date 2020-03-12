@@ -33,6 +33,7 @@ class Body extends Component {
       this.props.methods.sobre_escribir_el_estado({loading:true});
     }
 
+    //console.log(navigation,this.props.state.navigation);
     Array_search(this.props.state.navigation,navigation,this.props);
 
     var me      =   this.props.state.user;
@@ -64,22 +65,8 @@ class Body extends Component {
   }
 
   handleChageScreenNoAjax=(v,view,back)=>{
-    if (view==undefined) {
-      let view  = "ver_Evaluacion";
-    }
-    if (back==undefined) {
-      let back  = "ListaDeEvaluaciones";
-    }
-    Array_search(this.props.state.navigation,view,this.props);
+    Array_search(this.props.state.navigation,back,this.props);
     this.props.methods.sobre_escribir_el_estado({screen:view,add_Evaluaciones:v,common:v,})
-  }
-
-  ListaDeMisAlumnos=()=>{
-    return  <KeyboardAvoidingView style={styles.keyboard} behavior="padding" enabled>
-              <ScrollView style={styles.container}>
-
-              </ScrollView>
-            </KeyboardAvoidingView>
   }
 
   home_swicth_usuarios=()=>{

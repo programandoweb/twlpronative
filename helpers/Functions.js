@@ -13,6 +13,7 @@ const Back = (Object)  =>{
       new_array =  [...new_array,v]
     }
   })
+  console.log(new_array,anterior,array_navigation);
   if(Object.methods!=undefined){
     Object.methods.sobre_escribir_el_estado({navigation:new_array,screen:back});
   }else if (Object.sobre_escribir_el_estado!=undefined){
@@ -33,6 +34,7 @@ const Array_search =  (array,search,Object)  =>  {
       new_array =  [...Object.state.navigation,search]
       Object.methods.sobre_escribir_el_estado({navigation:new_array})
     }
+    console.log(array,search);
     //resolve(base64)
   });
 }

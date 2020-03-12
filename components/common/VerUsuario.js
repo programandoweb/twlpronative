@@ -6,11 +6,9 @@ import Topbar from './Topbar';
 
 class App extends Component {
   render() {
-    console.log(this.props.state.common);
-
     return (  <KeyboardAvoidingView style={this.props.styles.keyboard} behavior="padding" enabled>
                 <ScrollView style={this.props.styles.container}>
-                  <Topbar name="Usuario" back="ListaDeEvaluaciones" methods={this.props.methods} props={this.props}/>
+                  <Topbar name="Usuario" back="ListaDeMisAlumnos" methods={this.props.methods} props={this.props}/>
                   <Card containerStyle={{ borderBottomColor:this.props.params.style.borderBottomColor,
                                           borderBottomWidth:3
                                         }}>

@@ -5,7 +5,6 @@ import Topbar from '../../common/Topbar';
 
 class App extends Component {
   render() {
-    console.log(this.props.state)
     return (  <KeyboardAvoidingView style={ this.props.styles.keyboard} behavior="padding" enabled>
                 <ScrollView style={ this.props.styles.container}>
                   <Topbar name="Evaluaciones" back="Home" add="add_Evaluaciones" methods={this.props.methods} props={this.props}/>
@@ -23,7 +22,7 @@ class App extends Component {
                                   (v[1]!=undefined)?v[1].map((v2,k2) => {
                                     return (<TouchableOpacity
                                                 key={k2}
-                                                onPress={()=>this.props.handleChageScreenNoAjax(v2)}>
+                                                onPress={()=>this.props.handleChageScreenNoAjax(v2,"ver_Evaluacion","ListaDeEvaluaciones")}>
                                       <ListItem
                                         containerStyle={{paddingLeft:0, paddingBottom: 0}}
                                         roundAvatar
