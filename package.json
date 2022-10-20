@@ -38,7 +38,7 @@
     "react-native-open-doc": "^2.1.4",
     "react-native-picker-select": "^6.6.0",
     "react-native-push-notification": "^3.1.9",
-    "react-native-reanimated": "~1.4.0",
+    "react-native-reanimated": "~2.10.0",
     "react-native-render-html": "^4.2.0",
     "react-native-safe-area-context": "0.6.0",
     "react-native-screens": "2.0.0-alpha.12",
